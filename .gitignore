@@ -1,0 +1,6 @@
+
+#pycache
+publication/__pycache__
+
+#Mysql Pycache
+api/__pycache__
