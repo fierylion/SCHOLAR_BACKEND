@@ -1,29 +1,23 @@
 import queue
 import threading
 from typing import Any
-import os
+
 import openpyxl
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 import time
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.service import Service
+
 
 class Scrape():
     def __init__(self) -> None:
         options = Options()
         options.headless = True
         self.wb = openpyxl.Workbook()
-        driver_manager = ChromeDriverManager()
-        path = driver_manager.install()
-        self.path = path
-        self.driver = webdriver.Chrome(service = Service(path),options=options)
+        self.driver = webdriver.Chrome(options=options)
         # publications
         self.publication_results_queue = queue.Queue()
-       
-
 
     def __call__(self, test_users, path) -> Any:
         for user in test_users:
@@ -74,7 +68,7 @@ class Scrape():
     def fetch_publications(self, link):
         options = Options()
         options.headless = True
-        temp_driver = webdriver.Chrome(service=Service(self.path) ,options=options)
+        temp_driver = webdriver.Chrome(options=options)
         temp_driver.get(link)
         temp_driver.implicitly_wait(10)
         publications = {}
