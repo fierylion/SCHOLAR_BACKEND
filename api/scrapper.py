@@ -15,6 +15,7 @@ class Scrape():
         options = Options()
         options.headless = True
         options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
         path = Path('/usr/local/bin')
         self.path= path
         self.wb = openpyxl.Workbook()
@@ -71,7 +72,8 @@ class Scrape():
     def fetch_publications(self, link):
         options = Options()
         options.headless = True
-        options.add_argument('--no-sandbox')    
+        options.add_argument('--no-sandbox') 
+        options.add_argument('--disable-dev-shm-usage')   
         temp_driver = webdriver.Chrome(service=(Service(str(self.path))),options=options)
         temp_driver.get(link)
         temp_driver.implicitly_wait(10)
