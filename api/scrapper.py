@@ -55,8 +55,9 @@ class Scrape():
                             print(e)
                             break
                 with ThreadPoolExecutor(max_workers=4) as executor:
-                    results = executor.map(lambda x: x.result(), threads)
-
+                    for thread in threads:
+                        executor.submit(thread.result)
+                        
                 self.fill_multiple_publications(ws, current_row)
             except Exception as e:
                 print(e)
