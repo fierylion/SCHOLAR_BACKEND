@@ -113,6 +113,7 @@ class Scrape():
             return details
 
         try:
+            time.sleep(2)
             basic_info = dr.find_element(By.ID, 'gsc_prf_i')
             user_details['name'] = basic_info.find_element(By.ID, 'gsc_prf_inw').text
             user_details['position'] = basic_info.find_element(By.CSS_SELECTOR, '.gsc_prf_il').text.split(',')[0]
