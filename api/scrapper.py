@@ -9,6 +9,7 @@ from selenium.webdriver.chrome.options import Options
 from pathlib import Path
 import time
 from selenium.webdriver.chrome.service import Service
+from concurrent.futures import ThreadPoolExecutor
 
 class Scrape():
     def __init__(self) -> None:
@@ -33,21 +34,18 @@ class Scrape():
                 user_details = self.fetch_user_details(self.driver)
                 (ws, current_row) = self.create_excel(self.wb, user_details)
                 publications = self.driver.find_elements(By.CSS_SELECTOR, '#gsc_a_b>tr')
-                th = []
+                threads = []
                 for (ind, pb) in enumerate(publications):
-                    # create a thread to scrape each publication
-                    # The function will create new driver and execute from there
                     page_link = pb.find_element(By.TAG_NAME, 'a')
                     link = page_link.get_attribute('href')
-                    thread = threading.Thread(target=self.fetch_publications, args=(link,))
-                    th.append(thread)
+                    thread = ThreadPoolExecutor().submit(self.fetch_publications, link)
+                    threads.append(thread)
                     if (ind == len(publications) - 1):
                         try:
                             show_more = self.driver.find_element(By.ID, 'gsc_bpf_more')
                             show_more.click()
                             time.sleep(2)
                             new_publications = self.driver.find_elements(By.CSS_SELECTOR, '#gsc_a_b>tr')
-                            # remove repetitions
                             for pb in new_publications:
                                 if pb in publications:
                                     continue
@@ -56,15 +54,10 @@ class Scrape():
                         except Exception as e:
                             print(e)
                             break
-                # start the threads
-                for single_thread in th:
-                    single_thread.start()
-                # wait for threads to complete
-                for single_thread in th:
-                    single_thread.join()
-                # execute function to fill the publications
-                self.fill_multiple_publications(ws, current_row)
+                with ThreadPoolExecutor(max_workers=4) as executor:
+                    results = executor.map(lambda x: x.result(), threads)
 
+                self.fill_multiple_publications(ws, current_row)
             except Exception as e:
                 print(e)
         self.wb.save(path)
