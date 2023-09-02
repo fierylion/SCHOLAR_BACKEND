@@ -16,8 +16,8 @@ class Scrape():
     def __init__(self) -> None:
         print('Initializing scrapping!!!!!')
         self.options = Options()
-        self.service = Service(ChromeDriverManager().install())
-        self.options.binary_location('/root/chrome-linux/chrome')
+        # self.service = Service(ChromeDriverManager().install())
+        # self.options.binary_location('/root/chrome-linux/chrome')
         self.options.add_argument("--incognito")
 
         self.options.add_argument("--start-maximized")
@@ -39,7 +39,7 @@ class Scrape():
         path = Path('/usr/local/bin')
         self.path= path
         self.wb = openpyxl.Workbook()
-        self.driver = webdriver.Chrome(options=self.options,service=self.service )
+        self.driver = webdriver.Chrome(options=self.options )
         # publications
         self.publication_results_queue = queue.Queue()
 
@@ -84,7 +84,7 @@ class Scrape():
 
     def fetch_publications(self, link):
     
-        temp_driver = webdriver.Chrome(options=self.options,service=self.service)
+        temp_driver = webdriver.Chrome(options=self.options)
         temp_driver.get(link)
         temp_driver.implicitly_wait(10)
         publications = {}
