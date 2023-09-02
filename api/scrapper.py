@@ -10,11 +10,13 @@ from pathlib import Path
 import time
 from selenium.webdriver.chrome.service import Service
 from concurrent.futures import ThreadPoolExecutor
-
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 class Scrape():
     def __init__(self) -> None:
         print('Initializing scrapping!!!!!')
         self.options = Options()
+        self.service = Service(ChromeDriverManager().install())
    
         self.options.add_argument("--incognito")
 
@@ -37,7 +39,7 @@ class Scrape():
         path = Path('/usr/local/bin')
         self.path= path
         self.wb = openpyxl.Workbook()
-        self.driver = webdriver.Chrome(options=self.options)
+        self.driver = webdriver.Chrome(options=self.options,service=self.service )
         # publications
         self.publication_results_queue = queue.Queue()
 
@@ -82,7 +84,7 @@ class Scrape():
 
     def fetch_publications(self, link):
     
-        temp_driver = webdriver.Chrome(options=self.options)
+        temp_driver = webdriver.Chrome(options=self.options,service=self.service)
         temp_driver.get(link)
         temp_driver.implicitly_wait(10)
         publications = {}
