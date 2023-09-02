@@ -14,7 +14,24 @@ from concurrent.futures import ThreadPoolExecutor
 class Scrape():
     def __init__(self) -> None:
         self.options = Options()
-        self.options.headless = True
+   
+        self.options.add_argument("--incognito")
+
+        self.options.add_argument("--start-maximized")
+
+        self.options.add_argument('--disable-gpu')
+
+        self.options.add_argument('--disable-dev-shm-usage')
+
+        self.options.add_argument("--window-size=1920,1080")
+
+        self.options.add_argument("--headless")
+
+        self.options.add_argument('--disable-extensions')
+
+        self.options.add_argument('--no-sandbox')
+
+        self.options.add_argument('--remote-debugging-port=9222')
     
         path = Path('/usr/local/bin')
         self.path= path
