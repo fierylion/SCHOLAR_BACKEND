@@ -32,7 +32,7 @@ class Scrape():
 
         self.options.add_argument('--no-sandbox')
 
-        self.options.add_argument('--remote-debugging-port=9222')
+    
     
         path = Path('/usr/local/bin')
         self.path= path
