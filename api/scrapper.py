@@ -12,13 +12,19 @@ from selenium.webdriver.chrome.service import Service
 from concurrent.futures import ThreadPoolExecutor
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+import os
 class Scrape():
     def __init__(self) -> None:
         print('Initializing scrapping!!!!!')
+        install_dir = "/snap/firefox/current/usr/lib/firefox"
+        driver_loc = os.path.join(install_dir, "geckodriver")
+        binary_loc = os.path.join(install_dir, "firefox")
         self.options = Options()
-        # self.service = Service(ChromeDriverManager().install())
-        # self.options.binary_location('/root/chrome-linux/chrome')
+        self.service = Service(executable_path=driver_loc)
+        self.options.binary_location = binary_loc
         self.options.add_argument("--incognito")
+
+        
 
 
         self.options.add_argument('--disable-gpu')
@@ -37,7 +43,7 @@ class Scrape():
         path = Path('/usr/local/bin')
         self.path= path
         self.wb = openpyxl.Workbook()
-        self.driver = webdriver.Firefox(options=self.options )
+        self.driver = webdriver.Firefox(options=self.options, service=self.service )
         # publications
         self.publication_results_queue = queue.Queue()
 
@@ -82,7 +88,7 @@ class Scrape():
 
     def fetch_publications(self, link):
     
-        temp_driver = webdriver.Firefox(options=self.options)
+        temp_driver = webdriver.Firefox(options=self.options, service=self.service)
         temp_driver.get(link)
         temp_driver.implicitly_wait(10)
         publications = {}
