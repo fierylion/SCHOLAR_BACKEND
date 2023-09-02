@@ -5,7 +5,7 @@ import openpyxl
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.firefox.options import Options
 from pathlib import Path
 import time
 from selenium.webdriver.chrome.service import Service
@@ -20,13 +20,11 @@ class Scrape():
         # self.options.binary_location('/root/chrome-linux/chrome')
         self.options.add_argument("--incognito")
 
-        self.options.add_argument("--start-maximized")
 
         self.options.add_argument('--disable-gpu')
 
         self.options.add_argument('--disable-dev-shm-usage')
 
-        self.options.add_argument("--window-size=1920,1080")
 
         self.options.add_argument("--headless")
 
@@ -39,7 +37,7 @@ class Scrape():
         path = Path('/usr/local/bin')
         self.path= path
         self.wb = openpyxl.Workbook()
-        self.driver = webdriver.Chrome(options=self.options )
+        self.driver = webdriver.Firefox(options=self.options )
         # publications
         self.publication_results_queue = queue.Queue()
 
@@ -84,7 +82,7 @@ class Scrape():
 
     def fetch_publications(self, link):
     
-        temp_driver = webdriver.Chrome(options=self.options)
+        temp_driver = webdriver.Firefox(options=self.options)
         temp_driver.get(link)
         temp_driver.implicitly_wait(10)
         publications = {}
