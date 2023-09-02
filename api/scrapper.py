@@ -17,7 +17,7 @@ class Scrape():
         print('Initializing scrapping!!!!!')
         self.options = Options()
         self.service = Service(ChromeDriverManager().install())
-   
+        self.options.binary_location('/root/chrome-linux/chrome')
         self.options.add_argument("--incognito")
 
         self.options.add_argument("--start-maximized")
