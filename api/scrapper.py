@@ -13,6 +13,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 class Scrape():
     def __init__(self) -> None:
+        print('Initializing scrapping!!!!!')
         self.options = Options()
    
         self.options.add_argument("--incognito")
