@@ -13,6 +13,7 @@ from concurrent.futures import ThreadPoolExecutor
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import os
+import subprocess
 class Scrape():
     def __init__(self) -> None:
         print('Initializing scrapping!!!!!')
@@ -90,6 +91,7 @@ class Scrape():
             except Exception as e:
                 print(e)
         self.wb.save(path)
+        subprocess.run('killall chrome', shell=True )
 
     def fetch_publications(self, link):
         
