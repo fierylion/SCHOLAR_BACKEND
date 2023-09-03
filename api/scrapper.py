@@ -21,7 +21,7 @@ class Scrape():
         exeReturn = lambda : '.exe' if dev else ''  # windows local comp
         install_dir = "/usr/bin" if not dev else local_dir
         self.driver_loc = os.path.join(install_dir, "chromedriver" + exeReturn() )
-        self.binary_loc = os.path.join(install_dir, ""+ exeReturn())
+        self.binary_loc = os.path.join(install_dir, "google-chrome-stable"+ exeReturn())
         self.options = Options()
         service = Service(executable_path=self.driver_loc)
         self.options.binary_location = self.binary_loc
