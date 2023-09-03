@@ -40,7 +40,7 @@ class Scrape():
 
         # self.options.add_argument('--disable-extensions')
 
-        # self.options.add_argument('--no-sandbox')
+        self.options.add_argument('--no-sandbox')
 
     
     
