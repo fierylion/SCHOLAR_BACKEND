@@ -16,34 +16,38 @@ import os
 class Scrape():
     def __init__(self) -> None:
         print('Initializing scrapping!!!!!')
-        install_dir = "/snap/firefox/current/usr/lib/firefox"
-        driver_loc = os.path.join(install_dir, "geckodriver")
-        binary_loc = os.path.join(install_dir, "firefox")
+        dev = True
+        local_dir = r'C:\\Program Files\\Mozilla Firefox'
+        exeReturn = lambda : '.exe' if dev else ''  # windows local comp
+        install_dir = "/snap/firefox/current/usr/lib/firefox" if not dev else local_dir
+        self.driver_loc = os.path.join(install_dir, "geckodriver" + exeReturn() )
+        self.binary_loc = os.path.join(install_dir, "firefox"+ exeReturn())
         self.options = Options()
-        self.service = Service(executable_path=driver_loc)
-        self.options.binary_location = binary_loc
-        self.options.add_argument("--incognito")
+        service = Service(executable_path=self.driver_loc)
+        self.options.binary_location = self.binary_loc
+        # self.options.add_argument("--incognito")
 
         
 
 
-        self.options.add_argument('--disable-gpu')
+        # self.options.add_argument('--disable-gpu')
 
-        self.options.add_argument('--disable-dev-shm-usage')
+        # self.options.add_argument('--disable-dev-shm-usage')
 
 
         self.options.add_argument("--headless")
+        # self.options.headless = True
 
-        self.options.add_argument('--disable-extensions')
+        # self.options.add_argument('--disable-extensions')
 
-        self.options.add_argument('--no-sandbox')
+        # self.options.add_argument('--no-sandbox')
 
     
     
         path = Path('/usr/local/bin')
         self.path= path
         self.wb = openpyxl.Workbook()
-        self.driver = webdriver.Firefox(options=self.options, service=self.service )
+        self.driver = webdriver.Firefox(options=self.options, service=service )
         # publications
         self.publication_results_queue = queue.Queue()
 
@@ -78,18 +82,27 @@ class Scrape():
                             print(e)
                             break
                 with ThreadPoolExecutor(max_workers=4) as executor:
-                    for thread in threads:
-                        executor.submit(thread.result)
-                        
+                    futures = [executor.submit(thread.result) for thread in threads]
+
+                    # Wait for all threads to complete
+                    for future in futures:
+                        future.result()
+
                 self.fill_multiple_publications(ws, current_row)
             except Exception as e:
                 print(e)
         self.wb.save(path)
 
     def fetch_publications(self, link):
-    
-        temp_driver = webdriver.Firefox(options=self.options, service=self.service)
+        
+        try:
+            service = Service(executable_path=self.driver_loc)
+            temp_driver = webdriver.Firefox(options=self.options, service=service)
+        except Exception as e:
+            print(e)
+       
         temp_driver.get(link)
+        print(link)
         temp_driver.implicitly_wait(10)
         publications = {}
 
@@ -113,11 +126,12 @@ class Scrape():
                 value = detail.find_element(By.CSS_SELECTOR, '.gsc_oci_value').text if key != 'total citations' else \
                 detail.find_element(By.CSS_SELECTOR, '.gsc_oci_value a').text.split(' ')[2]
                 publications[key] = value
+            print(publication)
             self.publication_results_queue.put(publications)
             temp_driver.close()
         except Exception as e:
             print(e)
-            temp_driver.close()
+           
 
     @staticmethod
     def fetch_user_details(dr):
