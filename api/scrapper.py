@@ -5,7 +5,7 @@ import openpyxl
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.chrome.options import Options
 from pathlib import Path
 import time
 from selenium.webdriver.chrome.service import Service
@@ -16,15 +16,15 @@ import os
 class Scrape():
     def __init__(self) -> None:
         print('Initializing scrapping!!!!!')
-        dev = False
+        dev = True
         local_dir = r'C:\\Program Files\\Mozilla Firefox'
         exeReturn = lambda : '.exe' if dev else ''  # windows local comp
         install_dir = "/snap/firefox/current/usr/lib/firefox" if not dev else local_dir
         self.driver_loc = os.path.join(install_dir, "geckodriver" + exeReturn() )
         self.binary_loc = os.path.join(install_dir, "firefox"+ exeReturn())
         self.options = Options()
-        service = Service(executable_path=self.driver_loc)
-        self.options.binary_location = self.binary_loc
+        # service = Service(executable_path=self.driver_loc)
+        # self.options.binary_location = self.binary_loc
         # self.options.add_argument("--incognito")
 
         
@@ -47,7 +47,7 @@ class Scrape():
         path = Path('/usr/local/bin')
         self.path= path
         self.wb = openpyxl.Workbook()
-        self.driver = webdriver.Firefox(options=self.options, service=service )
+        self.driver = webdriver.Chrome(options=self.options)
         # publications
         self.publication_results_queue = queue.Queue()
 
@@ -82,11 +82,9 @@ class Scrape():
                             print(e)
                             break
                 with ThreadPoolExecutor(max_workers=4) as executor:
-                    futures = [executor.submit(thread.result) for thread in threads]
+                    for thread in threads:
+                        executor.submit(thread.result)
 
-                    # Wait for all threads to complete
-                    for future in futures:
-                        future.result()
 
                 self.fill_multiple_publications(ws, current_row)
             except Exception as e:
@@ -96,8 +94,8 @@ class Scrape():
     def fetch_publications(self, link):
         
         try:
-            service = Service(executable_path=self.driver_loc)
-            temp_driver = webdriver.Firefox(options=self.options, service=service)
+            # service = Service(executable_path=self.driver_loc)
+            temp_driver = webdriver.Chrome(options=self.options)
         except Exception as e:
             print(e)
        
@@ -126,7 +124,7 @@ class Scrape():
                 value = detail.find_element(By.CSS_SELECTOR, '.gsc_oci_value').text if key != 'total citations' else \
                 detail.find_element(By.CSS_SELECTOR, '.gsc_oci_value a').text.split(' ')[2]
                 publications[key] = value
-            print(publication)
+          
             self.publication_results_queue.put(publications)
             temp_driver.close()
         except Exception as e:
