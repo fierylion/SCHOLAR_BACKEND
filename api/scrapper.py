@@ -16,7 +16,7 @@ import os
 class Scrape():
     def __init__(self) -> None:
         print('Initializing scrapping!!!!!')
-        dev = True
+        dev = False
         local_dir = r'C:\\Program Files\\Mozilla Firefox'
         exeReturn = lambda : '.exe' if dev else ''  # windows local comp
         install_dir = "/snap/firefox/current/usr/lib/firefox" if not dev else local_dir
