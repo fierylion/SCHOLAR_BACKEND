@@ -16,15 +16,15 @@ import os
 class Scrape():
     def __init__(self) -> None:
         print('Initializing scrapping!!!!!')
-        dev = True
+        dev = False
         local_dir = r'C:\\Program Files\\Mozilla Firefox'
         exeReturn = lambda : '.exe' if dev else ''  # windows local comp
-        install_dir = "/snap/firefox/current/usr/lib/firefox" if not dev else local_dir
-        self.driver_loc = os.path.join(install_dir, "geckodriver" + exeReturn() )
-        self.binary_loc = os.path.join(install_dir, "firefox"+ exeReturn())
+        install_dir = "/usr/bin" if not dev else local_dir
+        self.driver_loc = os.path.join(install_dir, "chromedriver" + exeReturn() )
+        self.binary_loc = os.path.join(install_dir, "chrome"+ exeReturn())
         self.options = Options()
-        # service = Service(executable_path=self.driver_loc)
-        # self.options.binary_location = self.binary_loc
+        service = Service(executable_path=self.driver_loc)
+        self.options.binary_location = self.binary_loc
         # self.options.add_argument("--incognito")
 
         
@@ -47,7 +47,7 @@ class Scrape():
         path = Path('/usr/local/bin')
         self.path= path
         self.wb = openpyxl.Workbook()
-        self.driver = webdriver.Chrome(options=self.options)
+        self.driver = webdriver.Chrome(options=self.options, service=service)
         # publications
         self.publication_results_queue = queue.Queue()
 
@@ -94,8 +94,8 @@ class Scrape():
     def fetch_publications(self, link):
         
         try:
-            # service = Service(executable_path=self.driver_loc)
-            temp_driver = webdriver.Chrome(options=self.options)
+            service = Service(executable_path=self.driver_loc)
+            temp_driver = webdriver.Chrome(options=self.options, service=service)
         except Exception as e:
             print(e)
        
