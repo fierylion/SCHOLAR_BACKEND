@@ -81,7 +81,7 @@ class Scrape():
                         except Exception as e:
                             print(e)
                             break
-                with ThreadPoolExecutor(max_workers=4) as executor:
+                with ThreadPoolExecutor(max_workers=2) as executor:
                     for thread in threads:
                         executor.submit(thread.result)
 
